@@ -31,8 +31,6 @@ Using MagicEula
 ---------------
 * Ensure you have imported the project as described above and that it is set as a library project.
 
-* Ensure your AndroidManifest.xml lists com.magic09.magiceula.MagicEula as an activity.
-
 * Setup in the *onCreate* method of your main activity, for example:
 ```
 @Override
