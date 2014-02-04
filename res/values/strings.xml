@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">MagicEula</string>
+	<string name="button_accept">Accept</string>
+	<string name="button_reject">Reject</string>
+	
+	<string name="version_prefix">Version</string>
+    
+</resources>
