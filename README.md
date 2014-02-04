@@ -19,12 +19,11 @@ Follow these steps to clone the source if you would like to use this project and
 	- Select Tags → v1.0 (or whatever is the latest)
 	- Click *Checkout*
 9. Right-click the repository and select *Import Projects...*.
-10. Select the *Use the New Project wizard* option and click *Finish*.
-11. Select *Android Project from Existing Code* under the *Android* folder and click *Next >*.
-12. Click *Browse* and locate the project directory you cloned to in step 6 then click *Finish*.
-13. Switch to the *Java* perspective.
-14. Right-click the MagicEula project and click *Properties*.
-15. Under *Android* options check the *Is Library* check box and click *OK*.
+10. Select the *Import existing projects* option and click *Next >*.
+11. Ensure MagicEULA is checked and click *Finish*.
+12. Switch to the *Java* perspective.
+13. Right-click the MagicEula project and click *Properties*.
+14. Under *Android* options ensure *Is Library* is checked and click *OK*.
 
 
 Using MagicEula
