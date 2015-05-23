@@ -1,10 +1,18 @@
 package com.magic09.magiceula;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Resources.NotFoundException;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +63,7 @@ public class MagicEula {
 			Log.d(TAG, "App name, version or EULA message not passed?");
 			return;
 		}
-				
+		
 		final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		if (!myPrefs.getBoolean(EULA_ACCEPTED_KEY, false)) {
 			
@@ -118,11 +126,21 @@ public class MagicEula {
 	}
 	
 	/**
-	 *  Method sets the EULA message to display.
+	 *  Method sets the EULA message to display using the argument message.
 	 * @param message
 	 */
 	public void setMessage(String message) {
 		eulaMessage = message;
+	}
+	
+	/**
+	 * Method sets the EULA notes using the passed text file resource
+	 * in the argument resId.  Requires context.
+	 * @param context
+	 * @param resId
+	 */
+	public void setMessageFromTextFile(Context context, int resId) {
+		eulaMessage = readEulaFromRawHtmlTextFile(context, resId);
 	}
 	
 	/**
@@ -134,4 +152,42 @@ public class MagicEula {
 		SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		return myPrefs.getBoolean(EULA_ACCEPTED_KEY, false);
 	}
+	
+	/**
+	 * Method reads the text file (raw) resource specified in the argument
+	 * resId and returns a String with its contents.
+	 * @param context
+	 * @param resId
+	 * @return
+	 */
+	private String readEulaFromRawHtmlTextFile(Context context, int resId) {
+		String result = null;
+		
+		try {
+			InputStream inputStream = context.getResources().openRawResource(resId);
+			InputStreamReader inputreader = new InputStreamReader(inputStream);
+		    BufferedReader buffreader =
+		    		new BufferedReader(inputreader);
+		    String line;
+		    StringBuilder text = new StringBuilder();
+		    try {
+		        while ((line = buffreader.readLine()) != null) {
+		        	if (text.length() > 0)
+			            text.append('\n');
+		            text.append(line);
+		        }
+		        result = text.toString();
+		    } catch (IOException e) {
+		        result = null;
+		    }
+		} catch (NotFoundException e) {
+			Log.e(TAG, "Cannot find text file resourse to display!");
+			e.printStackTrace();
+		}
+		
+		// Ensure we display any HTML encoded characters correctly
+		result = Html.fromHtml(result).toString();
+	    return result;
+	}
+	
 }
