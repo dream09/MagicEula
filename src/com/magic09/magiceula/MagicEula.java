@@ -140,7 +140,7 @@ public class MagicEula {
 	 * @param resId
 	 */
 	public void setMessageFromTextFile(Context context, int resId) {
-		eulaMessage = readEulaFromRawTextFile(context, resId);
+		eulaMessage = readEulaFromRawHtmlTextFile(context, resId);
 	}
 	
 	/**
@@ -160,19 +160,21 @@ public class MagicEula {
 	 * @param resId
 	 * @return
 	 */
-	private String readEulaFromRawTextFile(Context context, int resId) {
+	private String readEulaFromRawHtmlTextFile(Context context, int resId) {
 		String result = null;
 		
 		try {
 			InputStream inputStream = context.getResources().openRawResource(resId);
 			InputStreamReader inputreader = new InputStreamReader(inputStream);
-		    BufferedReader buffreader = new BufferedReader(inputreader);
+		    BufferedReader buffreader =
+		    		new BufferedReader(inputreader);
 		    String line;
 		    StringBuilder text = new StringBuilder();
 		    try {
-		        while (( line = buffreader.readLine()) != null) {
+		        while ((line = buffreader.readLine()) != null) {
+		        	if (text.length() > 0)
+			            text.append('\n');
 		            text.append(line);
-		            text.append('\n');
 		        }
 		        result = text.toString();
 		    } catch (IOException e) {
