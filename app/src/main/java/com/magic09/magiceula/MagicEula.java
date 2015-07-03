@@ -1,10 +1,5 @@
 package com.magic09.magiceula;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,6 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * MagicEula provides a simple End User Licence Agreement (EULA) presented
@@ -59,7 +59,7 @@ public class MagicEula {
 	 */
 	public void showEula() {
 		
-		if (appName == "" || appVersion == "" || eulaMessage == "") {
+		if (appName.equals("") || appVersion.equals("") || eulaMessage.equals("")) {
 			Log.d(TAG, "App name, version or EULA message not passed?");
 			return;
 		}
@@ -68,7 +68,7 @@ public class MagicEula {
 		if (!myPrefs.getBoolean(EULA_ACCEPTED_KEY, false)) {
 			
 			// Inflate and setup the view.
-			LayoutInflater inflater = (LayoutInflater) mActivity.getLayoutInflater();
+			LayoutInflater inflater = mActivity.getLayoutInflater();
 			View eulaView = inflater.inflate(R.layout.eula_view, null);
 			TextView eulaAppTitle = (TextView) eulaView.findViewById(R.id.eula_app_title);
 			eulaAppTitle.setText(appName);
@@ -111,7 +111,7 @@ public class MagicEula {
 	
 	/**
 	 * Method sets the app name to display.
-	 * @param name
+	 * @param name The app name to display.
 	 */
 	public void setAppName(String name) {
 		appName = name;
@@ -119,7 +119,7 @@ public class MagicEula {
 	
 	/**
 	 * Method sets the version information to display.
-	 * @param version
+	 * @param version The version information to display
 	 */
 	public void setAppVersion(String version) {
 		appVersion = version;
@@ -127,7 +127,7 @@ public class MagicEula {
 	
 	/**
 	 *  Method sets the EULA message to display using the argument message.
-	 * @param message
+	 * @param message The EULA message to display.
 	 */
 	public void setMessage(String message) {
 		eulaMessage = message;
@@ -136,8 +136,8 @@ public class MagicEula {
 	/**
 	 * Method sets the EULA notes using the passed text file resource
 	 * in the argument resId.  Requires context.
-	 * @param context
-	 * @param resId
+	 * @param context Context used to access resources.
+	 * @param resId The id of the html text file from which to get the EULA message to display.
 	 */
 	public void setMessageFromTextFile(Context context, int resId) {
 		eulaMessage = readEulaFromRawHtmlTextFile(context, resId);
@@ -146,7 +146,7 @@ public class MagicEula {
 	/**
 	 * Method returns true if the user has already accepted
 	 * the EULA otherwise false.
-	 * @return
+	 * @return The boolean representing if the EULA has been previously accepted.
 	 */
 	public boolean getEulaAccepted() {
 		SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
@@ -156,9 +156,9 @@ public class MagicEula {
 	/**
 	 * Method reads the text file (raw) resource specified in the argument
 	 * resId and returns a String with its contents.
-	 * @param context
-	 * @param resId
-	 * @return
+	 * @param context Context used to access resources.
+	 * @param resId The id of the html text file from which to get the EULA message to display.
+	 * @return The text retrieved from the html text file resource.
 	 */
 	private String readEulaFromRawHtmlTextFile(Context context, int resId) {
 		String result = null;
