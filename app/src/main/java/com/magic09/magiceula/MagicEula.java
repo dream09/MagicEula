@@ -60,7 +60,7 @@ public class MagicEula {
 	public void showEula() {
 		
 		if (appName.equals("") || appVersion.equals("") || eulaMessage.equals("")) {
-			Log.d(TAG, "App name, version or EULA message not passed?");
+			Log.e(TAG, "App name, version or EULA message not passed?");
 			return;
 		}
 		

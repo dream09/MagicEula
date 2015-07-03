@@ -25,3 +25,6 @@ proguard/
 # Android studio
 /gen
 /.idea
+
+# Mac thumb files
+.DS_Store
