@@ -1,17 +1,13 @@
 package com.magic09.magiceula;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +16,7 @@ import java.io.InputStreamReader;
 
 /**
  * MagicEula provides a simple End User Licence Agreement (EULA) presented
- * in a dialog with Accept and Reject buttons.  It is only shown on first
- * install and when app has been updated.
+ * in a dialog with Accept and Reject buttons.
  * @author dream09
  *
  */
@@ -47,7 +42,7 @@ public class MagicEula {
 		appVersion = "";
 		eulaMessage = "";
 	}
-	
+
 	
 	
 	/* Methods */
@@ -58,54 +53,25 @@ public class MagicEula {
 	 * the app is closed.
 	 */
 	public void showEula() {
-		
+
+        // Check we have all the information required to show the EULA
 		if (appName.equals("") || appVersion.equals("") || eulaMessage.equals("")) {
-			Log.e(TAG, "App name, version or EULA message not passed?");
-			return;
+			Log.e(TAG, "App name, version or EULA message not set before calling showEula()?");
+            throw new IllegalArgumentException("App name, version or EULA message not set before calling showEula()?");
 		}
-		
-		final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+
+        // Check if the EULA has already been accepted
+		SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		if (!myPrefs.getBoolean(EULA_ACCEPTED_KEY, false)) {
-			
-			// Inflate and setup the view.
-			LayoutInflater inflater = mActivity.getLayoutInflater();
-			View eulaView = inflater.inflate(R.layout.eula_view, null);
-			TextView eulaAppTitle = (TextView) eulaView.findViewById(R.id.eula_app_title);
-			eulaAppTitle.setText(appName);
-			TextView eulaAppVersion = (TextView) eulaView.findViewById(R.id.eula_app_version);
-			eulaAppVersion.setText(mActivity.getString(R.string.version_prefix) + " " + appVersion);
-			TextView eulaText = (TextView) eulaView.findViewById(R.id.eula_message);
-			eulaText.setText(eulaMessage);
-			
-			// Build the alert and show.
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-    		builder.setView(eulaView)
-    			.setPositiveButton(mActivity.getString(R.string.button_accept), new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						SharedPreferences.Editor editor = myPrefs.edit();
-						editor.putBoolean(EULA_ACCEPTED_KEY, true).commit();
-						dialog.dismiss();
-					}
-				})
-    			.setNegativeButton(mActivity.getString(R.string.button_reject), new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						mActivity.finish();
-					}
-				})
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						mActivity.finish();
-					}
-				});
-    		
-    		AlertDialog dialog = builder.create();
-    		dialog.show();
+
+			// Display EULA dialog fragment
+            MagicEulaDialogFragment dialogFragment = new MagicEulaDialogFragment();
+            Bundle fragBundle = new Bundle();
+            fragBundle.putString(MagicEulaDialogFragment.TITLE, appName);
+            fragBundle.putString(MagicEulaDialogFragment.VERSION, appVersion);
+            fragBundle.putString(MagicEulaDialogFragment.MESSAGE, eulaMessage);
+            dialogFragment.setArguments(fragBundle);
+            dialogFragment.show(mActivity.getFragmentManager(), "MAGICEULA");
 		}
 	}
 	
@@ -181,7 +147,7 @@ public class MagicEula {
 		        result = null;
 		    }
 		} catch (NotFoundException e) {
-			Log.e(TAG, "Cannot find text file resourse to display!");
+			Log.e(TAG, "Cannot find text file resource to display!");
 			e.printStackTrace();
 		}
 		
@@ -189,5 +155,5 @@ public class MagicEula {
 		result = Html.fromHtml(result).toString();
 	    return result;
 	}
-	
+
 }
