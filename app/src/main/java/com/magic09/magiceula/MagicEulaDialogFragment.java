@@ -1,20 +1,24 @@
 package com.magic09.magiceula;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+
+
 /**
- * Created by magic09 on 04/07/15.
+ * MagicEulaDialogFragment provides a DialogFragment to display the
+ * EULA with accept and reject buttons.
+ * @author dream09
  */
 public class MagicEulaDialogFragment extends DialogFragment {
 
@@ -25,31 +29,14 @@ public class MagicEulaDialogFragment extends DialogFragment {
 
 
 
-    /* Interfaces */
-
-    /**
-     * Interface to return selection.
-     * @author dream09
-     *
-     */
-    public interface EulaDialogListener {
-        public void onEulaResult(Boolean result);
-    }
-
-
-
     /* Constructor */
     public MagicEulaDialogFragment() {
         // Empty constructor required for a DialogFragment
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof EulaDialogListener)) {
-            throw new ClassCastException(activity.toString() + " must implement EulaDialogListener!");
-        }
-    }
+
+
+    /* Overridden methods */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,21 +71,21 @@ public class MagicEulaDialogFragment extends DialogFragment {
         builder.setPositiveButton(getActivity().getString(R.string.button_accept), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendResult(true);
+                        checkResult(true);
                         dismiss();
                     }
                 })
                 .setNegativeButton(getActivity().getString(R.string.button_reject), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        sendResult(false);
+                        checkResult(false);
                         dismiss();
                     }
                 })
                 .setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        sendResult(false);
+                        checkResult(false);
                         dismiss();
                     }
                 });
@@ -111,12 +98,18 @@ public class MagicEulaDialogFragment extends DialogFragment {
     /* Methods */
 
     /**
-     * Method uses EulaDialogListener interface to send the argument
-     * result.
-     * @param result
+     * Method reacts to the argument result.  If true stores that the EULA
+     * was accepted else finishes the parent activity.
+     * @param result True if accepted, false if rejected.
      */
-    private void sendResult(boolean result) {
-        EulaDialogListener activity = (EulaDialogListener) getActivity();
-        activity.onEulaResult(result);
+    private void checkResult(boolean result) {
+        if (result) {
+            // EULA accepted so store in shared preferences
+            PreferenceManager.getDefaultSharedPreferences(getActivity()).edit()
+                    .putBoolean(MagicEula.EULA_ACCEPTED_KEY, true).commit();
+        } else {
+            // EULA rejected close activity
+            getActivity().finish();
+        }
     }
 }

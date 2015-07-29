@@ -9,8 +9,6 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.util.Log;
 
-import com.magic09.magiceula.MagicEulaDialogFragment.EulaDialogListener;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +21,7 @@ import java.io.InputStreamReader;
  * @author dream09
  *
  */
-public class MagicEula implements EulaDialogListener {
+public class MagicEula {
 
 	static final String TAG = "MagicEula";
 	public static final String EULA_ACCEPTED_KEY = "com.magic09.magiceula.accepted";
@@ -45,24 +43,6 @@ public class MagicEula implements EulaDialogListener {
 		appVersion = "";
 		eulaMessage = "";
 	}
-
-
-    /**
-     * MagicEulaDialogFragment EulaDialogListener implementation.
-     * @param result
-     */
-
-    @Override
-    public void onEulaResult(Boolean result) {
-        if (result) {
-            // EULA accepted so store in shared preferences
-            PreferenceManager.getDefaultSharedPreferences(mActivity).edit()
-                    .putBoolean(EULA_ACCEPTED_KEY, true).commit();
-        } else {
-            // EULA rejected close activity
-            mActivity.finish();
-        }
-    }
 
 	
 	
