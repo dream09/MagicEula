@@ -10,15 +10,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
-
 
 
 /**
  * MagicEulaDialogFragment provides a DialogFragment to display the
  * EULA with accept and reject buttons.
  * @author dream09
+ *
  */
 public class MagicEulaDialogFragment extends DialogFragment {
 
@@ -38,8 +37,12 @@ public class MagicEulaDialogFragment extends DialogFragment {
 
     /* Overridden methods */
 
+    @NonNull
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        // Prevent EULA being cancelled
+        setCancelable(false);
 
         // Get arguments
         String title = getArguments().getString(TITLE);
@@ -47,6 +50,7 @@ public class MagicEulaDialogFragment extends DialogFragment {
         String message = getArguments().getString(MESSAGE);
 
         // Setup view
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         View eulaView = inflater.inflate(R.layout.eula_view, null);
         TextView eulaAppTitle = (TextView) eulaView.findViewById(R.id.eula_app_title);
         if (title != null && eulaAppTitle != null) {
@@ -61,55 +65,27 @@ public class MagicEulaDialogFragment extends DialogFragment {
             eulaText.setText(message);
         }
 
-        return eulaView;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Create EULA dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setPositiveButton(getActivity().getString(R.string.button_accept), new DialogInterface.OnClickListener() {
+        builder.setView(eulaView)
+                .setPositiveButton(getActivity().getString(R.string.button_accept), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        checkResult(true);
-                        dismiss();
+                        // EULA accepted so store in shared preferences
+                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit()
+                                .putBoolean(MagicEula.EULA_ACCEPTED_KEY, true).commit();
                     }
                 })
                 .setNegativeButton(getActivity().getString(R.string.button_reject), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        checkResult(false);
-                        dismiss();
-                    }
-                })
-                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        checkResult(false);
-                        dismiss();
+                        // EULA rejected close activity
+                        getActivity().finish();
+
                     }
                 });
 
         return builder.create();
     }
 
-
-
-    /* Methods */
-
-    /**
-     * Method reacts to the argument result.  If true stores that the EULA
-     * was accepted else finishes the parent activity.
-     * @param result True if accepted, false if rejected.
-     */
-    private void checkResult(boolean result) {
-        if (result) {
-            // EULA accepted so store in shared preferences
-            PreferenceManager.getDefaultSharedPreferences(getActivity()).edit()
-                    .putBoolean(MagicEula.EULA_ACCEPTED_KEY, true).commit();
-        } else {
-            // EULA rejected close activity
-            getActivity().finish();
-        }
-    }
 }

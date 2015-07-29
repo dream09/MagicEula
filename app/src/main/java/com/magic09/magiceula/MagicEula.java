@@ -16,8 +16,7 @@ import java.io.InputStreamReader;
 
 /**
  * MagicEula provides a simple End User Licence Agreement (EULA) presented
- * in a dialog with Accept and Reject buttons.  It is only shown on first
- * install and when app has been updated.
+ * in a dialog with Accept and Reject buttons.
  * @author dream09
  *
  */
@@ -65,7 +64,7 @@ public class MagicEula {
 		SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		if (!myPrefs.getBoolean(EULA_ACCEPTED_KEY, false)) {
 
-			// Display EULA dialog
+			// Display EULA dialog fragment
             MagicEulaDialogFragment dialogFragment = new MagicEulaDialogFragment();
             Bundle fragBundle = new Bundle();
             fragBundle.putString(MagicEulaDialogFragment.TITLE, appName);
@@ -73,49 +72,6 @@ public class MagicEula {
             fragBundle.putString(MagicEulaDialogFragment.MESSAGE, eulaMessage);
             dialogFragment.setArguments(fragBundle);
             dialogFragment.show(mActivity.getFragmentManager(), "MAGICEULA");
-
-            /*
-			// Inflate and setup the view.
-			LayoutInflater inflater = mActivity.getLayoutInflater();
-			View eulaView = inflater.inflate(R.layout.eula_view, null);
-			TextView eulaAppTitle = (TextView) eulaView.findViewById(R.id.eula_app_title);
-			eulaAppTitle.setText(appName);
-			TextView eulaAppVersion = (TextView) eulaView.findViewById(R.id.eula_app_version);
-			eulaAppVersion.setText(mActivity.getString(R.string.version_prefix) + " " + appVersion);
-			TextView eulaText = (TextView) eulaView.findViewById(R.id.eula_message);
-			eulaText.setText(eulaMessage);
-			
-			// Build the alert and show.
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-    		builder.setView(eulaView)
-    			.setPositiveButton(mActivity.getString(R.string.button_accept), new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						SharedPreferences.Editor editor = myPrefs.edit();
-						editor.putBoolean(EULA_ACCEPTED_KEY, true).commit();
-						dialog.dismiss();
-					}
-				})
-    			.setNegativeButton(mActivity.getString(R.string.button_reject), new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						mActivity.finish();
-					}
-				})
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						mActivity.finish();
-					}
-				});
-    		
-    		AlertDialog dialog = builder.create();
-    		dialog.show();
-    		*/
-
 		}
 	}
 	
